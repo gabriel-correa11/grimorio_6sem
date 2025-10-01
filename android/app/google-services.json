@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "556724769927",
+    "project_id": "grimorio-416b6",
+    "storage_bucket": "grimorio-416b6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556724769927:android:1a9eb2dff47ca9581cd422",
+        "android_client_info": {
+          "package_name": "com.example.grimorio_novo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP5rDzWhZq9N9ZkVur7l8PAV81y4XlpD8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
