@@ -6,4 +6,9 @@ class AppColors {
   static const Color azulIntermediario = Color(0xFF2149B6);
   static const Color azulForte = Color(0xFF3165DC);
   static const Color azulClaro = Color(0xFF4687F0);
+
+  static const Color primaryAction = azulForte;
+  static const Color background = azulEscuro;
+  static const Color primaryText = Colors.white;
+  static const Color secondaryText = azulClaro;
 }

@@ -1,80 +1,129 @@
-# 🏰 Projeto Grimorio - Aplicativo de Gamificação de Leitura
+<div align="center">
+<h3><a href="#">Português</a> • <a href="#">English</a></h3>
+</div>
+<hr>
 
-**Status do Projeto:** Em Desenvolvimento Ativo
+🏰 Projeto Grimorio
+<div align="center">
 
-Este é o repositório oficial do projeto Grimorio, um aplicativo mobile desenvolvido como projeto para a disciplina de [Nome da Disciplina]. O objetivo é combater o declínio do hábito de leitura através de uma plataforma que gamifica a experiência literária.
+</div>
 
----
+Status do Projeto: Em Desenvolvimento 🚀
 
-### Tecnologias Utilizadas
+Este é o repositório do nosso projeto de faculdade, o Grimorio. A ideia é criar um app em Flutter que usa elementos de jogos para incentivar o hábito da leitura, transformando cada livro em uma jornada interativa.
 
-![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-%230175C2.svg?style=for-the-badge&logo=Dart&logoColor=white)
-![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase&logoColor=white)
-![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
+<details>
+<summary>View in English</summary>
 
----
+Project Status: In Development 🚀
 
-### 1. Problematização
+This is the repository for our college project, Grimorio. The idea is to create an app in Flutter that uses gamification elements to encourage the habit of reading, turning each book into an interactive journey.
 
-O projeto propõe uma intervenção direta na atual cultura de consumo de conteúdo, onde a leitura profunda tem sido sistematicamente substituída por interações digitais superficiais. O problema central é a dificuldade de o livro, como mídia, competir em um ambiente saturado por estímulos de recompensa imediata. Para quebrar esse ciclo, o Grimorio funciona como um ecossistema de incentivo à leitura, construindo uma jornada interativa com elementos de progressão que tornam o ato de ler uma experiência mais estimulante.
+</details>
 
----
+1. O Problema que Queremos Resolver
+   Hoje em dia, os livros competem pela nossa atenção com redes sociais e jogos, que oferecem recompensas rápidas. Nossa ideia com o Grimorio é usar essa mesma lógica a favor da leitura, criando um app que dê ao usuário uma sensação de progresso e conquista a cada capítulo ou livro finalizado.
 
-### 2. Decisões de Arquitetura e Tecnologia
+<details>
+<summary>View in English</summary>
 
-A escolha da stack tecnológica foi pautada na agilidade, performance e na experiência prévia da equipe.
+1. The Problem We Want to Solve
+   Nowadays, books compete for our attention with social media and games, which offer quick rewards. Our idea with Grimorio is to use this same logic in favor of reading, creating an app that gives the user a sense of progress and achievement with each chapter or book finished.
 
-* **Flutter & Dart:** Escolhido como framework principal devido à sua alta performance e capacidade de compilação nativa para múltiplas plataformas (Android e iOS) a partir de um único código-base. A linguagem Dart, por ser fortemente tipada e orientada a objetos, ofereceu uma transição suave para desenvolvedores com background em Java, acelerando o ciclo de aprendizado.
+</details>
 
-* **Firebase (Backend-as-a-Service):** Selecionado para gerenciar a autenticação de usuários. Utilizar o Firebase Authentication nos permitiu implementar um sistema de login e cadastro seguro e escalável (com e-mail/senha) sem a necessidade de construir e manter um backend do zero, permitindo que a equipe foque nas funcionalidades core do aplicativo.
+2. Arquitetura e Decisões Técnicas
+   Escolhemos nossas ferramentas pensando em agilidade e performance:
 
-* **Arquitetura Limpa (Clean Architecture):** O projeto foi estruturado seguindo o princípio de **Separação de Responsabilidades (SoC)**. O código está dividido em camadas distintas para garantir manutenibilidade e escalabilidade:
-    * **`models` (`book.dart`):** Classes Puras (POJOs/POCOs) que definem a estrutura de dados da aplicação (Livros, Questões).
-    * **`logic` (`quiz_brain.dart`):** Camada de lógica de negócios, totalmente desacoplada da UI. O `QuizBrain` gerencia o estado do jogo, as regras e os dados, sem saber como a UI é renderizada.
-    * **`screens`:** Widgets que representam telas completas e gerenciam o estado da UI (`StatefulWidget`).
-    * **`widgets`:** Widgets menores, reutilizáveis e "burros" (`StatelessWidget`), que recebem dados e os renderizam, promovendo a componentização.
+Flutter & Dart: A escolha principal. Com o Flutter, podemos criar um app para Android e iOS com um único código. Como já tínhamos uma base de orientação a objetos com Java, a transição para o Dart foi bem tranquila.
 
----
+Firebase: Para cuidar do backend. Usamos o Firebase Authentication para ter um sistema de login e cadastro seguro (com e-mail, senha e verificação) sem precisar construir um servidor do zero.
 
-### 3. Funcionalidades Implementadas
+Arquitetura Limpa e Gerenciamento de Estado:
 
-Até o momento, a base funcional do aplicativo foi concluída, incluindo:
+Separação de Responsabilidades: Desde o início, separamos o código em camadas: screens para as telas, widgets para componentes reutilizáveis e classes de lógica.
 
-#### 3.1. Autenticação Completa de Usuários
-- **Tecnologia:** `firebase_auth`.
-- **Descrição:** Implementação de uma tela de autenticação (`AuthPage`) que permite o **cadastro (`createUserWithEmailAndPassword`)** e **login (`signInWithEmailAndPassword`)** de usuários. As operações são assíncronas (`async/await`) para não bloquear a interface. Em caso de sucesso, o usuário é redirecionado para a home do app. A gestão de sessões é controlada pelo Firebase.
+State Management com Provider: A tela de autenticação ficou muito complexa. Para resolver isso, refatoramos a arquitetura: criamos uma classe AuthController que gerencia toda a lógica e estado da página, enquanto a UI (AuthPage) apenas exibe os dados. Isso deixou o código muito mais limpo e fácil de manter.
 
-#### 3.2. Fluxo de Navegação e Múltiplas Telas
-- **Tecnologia:** `MaterialApp Router` (Named Routes).
-- **Descrição:** O aplicativo possui um fluxo de navegação claro entre múltiplas telas, gerenciado por rotas nomeadas (`/auth`, `/`, `/quiz`). A tela de seleção de livros (`BookSelectionPage`) passa o índice do livro selecionado como `arguments` para a tela de quiz (`QuizPage`), que por sua vez utiliza o `ModalRoute` para receber e processar essa informação, carregando o quiz correto.
+<details>
+<summary>View in English</summary>
 
-#### 3.3. Módulo de Quiz Dinâmico e Interativo
-- **Tecnologia:** `StatefulWidget`, `setState`, `rflutter_alert`.
-- **Descrição:** O coração do app. A tela de quiz é um `StatefulWidget` que se reconstrói a cada resposta através do `setState`, atualizando a pergunta e a pontuação. A lógica é totalmente controlada pela classe `QuizBrain`. Ao final do quiz, um alerta customizado (`rflutter_alert`) é exibido com a pontuação final, e o usuário pode optar por voltar à tela de seleção, completando o ciclo de jogo.
+2. Architecture and Technical Decisions
+   We chose our tools thinking about agility and performance:
 
-#### 3.4. Arquitetura de UI Componentizada
-- **Tecnologia:** `StatelessWidget`.
-- **Descrição:** A UI foi refatorada em componentes reutilizáveis, como `QuestionDisplay` (para exibir o texto da pergunta) e `AnswerButton` (um botão de resposta genérico que recebe cor e função como parâmetros). Isso simplificou drasticamente o método `build` da tela principal, tornando-o mais legível e fácil de manter.
+Flutter & Dart: Our main choice. With Flutter, we can create an app for Android and iOS from a single codebase. As we already had a background in object-oriented programming with Java, the transition to Dart was very smooth.
 
-#### 3.5. Sistema de Tema e Identidade Visual
-- **Tecnologia:** `ThemeData`.
-- **Descrição:** Foi criado e aplicado um tema global no `MaterialApp` para garantir consistência visual em todo o aplicativo. Cores primárias, de fundo, estilos de `AppBar`, `ElevatedButton` e `OutlinedButton` foram centralizados, facilitando futuras alterações de design.
+Firebase: To take care of the backend. We use Firebase Authentication to have a secure login and registration system (with email, password, and verification) without needing to build a server from scratch.
 
----
+Clean Architecture and State Management:
 
-### 4. Próximos Passos (Roadmap)
+Separation of Concerns: From the beginning, we separated the code into layers: screens for the pages, widgets for reusable components, and logic classes.
 
-1.  **Perfil do Usuário:** Criar uma tela de perfil onde o usuário possa ver seu progresso e fazer logout.
-2.  **Gamificação (V2):** Implementar o salvamento de progresso (livros concluídos, pontuação total/XP) no Firebase (Firestore).
-3.  **Quiz de Múltipla Escolha:** Evoluir o `QuizBrain` e a UI para suportar questões de múltipla escolha, em vez de apenas Verdadeiro/Falso.
+State Management with Provider: The authentication screen started to get very complex. To solve this, we refactored the architecture: we created an AuthController class that manages all the logic and page state, while the UI (AuthPage) just displays the data. This made the code much cleaner and easier to maintain.
 
----
+</details>
 
-### 5. Como Executar o Projeto
+3. O que já está funcionando (Features)
+   Sistema de Autenticação Completo: Cadastro, login, verificação de e-mail, "esqueci a senha", e validação de campos. Tudo gerenciado por um Controller separado da UI.
 
-1.  Clone este repositório: `git clone [URL_DO_SEU_REPO]`
-2.  Garanta que o Flutter SDK está instalado e o ambiente configurado (`flutter doctor`).
-3.  Crie o arquivo `android/local.properties` com os caminhos para o seu SDK do Flutter e do Android.
-4.  Execute `flutter pub get` para instalar as dependências.
-5.  Execute `flutter run` para iniciar o aplicativo em um dispositivo ou emulador.
+UI Componentizada: A tela de autenticação foi dividida em múltiplos widgets (AuthHeader, AuthFormFields, AuthActionButtons), deixando o código mais organizado.
+
+Módulo de Quiz Funcional: O fluxo principal do app (login -> seleção de livro -> quiz -> pontuação) está completo.
+
+Tema Visual Centralizado: Um ThemeData global garante que todo o app tenha uma aparência consistente.
+
+<details>
+<summary>View in English</summary>
+
+3. What's Already Working (Features)
+   Complete Authentication System: User registration, login, email verification, "forgot password," and field validation. Everything is managed by a Controller separated from the UI.
+
+Component-Based UI: The authentication screen was broken down into multiple widgets (AuthHeader, AuthFormFields, AuthActionButtons), making the code more organized.
+
+Functional Quiz Module: The main app flow (login -> book selection -> quiz -> score) is complete.
+
+Centralized Visual Theme: A global ThemeData ensures the entire app has a consistent look and feel.
+
+</details>
+
+4. Próximos Passos
+   Tela de Perfil: Construir a tela de perfil do usuário com a opção de logout.
+
+Salvar Progresso: Usar o Firestore para salvar a pontuação e os livros completos.
+
+Evoluir o Quiz: Mudar as perguntas para o formato de Múltipla Escolha.
+
+<details>
+<summary>View in English</summary>
+
+4. Next Steps
+   Profile Screen: Build the user profile screen with a logout option.
+
+Save Progress: Use Firestore to save scores and completed books.
+
+Evolve the Quiz: Change the questions to a Multiple Choice format.
+
+</details>
+
+5. Como Executar o Projeto
+   Clone o repositório.
+
+Garanta que o Flutter está instalado (flutter doctor).
+
+Rode flutter pub get para baixar as dependências.
+
+Rode flutter run para iniciar o app.
+
+<details>
+<summary>View in English</summary>
+
+5. How to Run the Project
+   Clone the repository.
+
+Ensure Flutter is installed (flutter doctor).
+
+Run flutter pub get to download dependencies.
+
+Run flutter run to start the app.
+
+</details>

@@ -28,6 +28,10 @@ class QuizBrain {
     ),
   ];
 
+  String getCurrentBookTitle() {
+    return _bookData[_currentBookIndex].title;
+  }
+
   int getBookCount() {
     return _bookData.length;
   }
