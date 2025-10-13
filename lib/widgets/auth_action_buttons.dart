@@ -24,24 +24,21 @@ class AuthActionButtons extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: onResetPassword,
-              child: const Text('Esqueceu a senha?', style: TextStyle(color: Colors.white)),
+              child: const Text('Esqueceu a senha?'),
             ),
           ),
-        const SizedBox(height: 20.0),
+        const SizedBox(height: 20),
         ElevatedButton(
           onPressed: onSubmit,
-          child: Text(isLogin ? 'Login' : 'Criar Conta'),
+          child: Text(isLogin ? 'Login' : 'Cadastrar'),
         ),
-        const SizedBox(height: 20.0),
+        const SizedBox(height: 12),
         OutlinedButton(
-          style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.white)),
           onPressed: onToggleAuthMode,
           child: Text(
             isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça o login',
-            style: const TextStyle(color: Colors.white),
           ),
         ),
-        const SizedBox(height: 50),
       ],
     );
   }

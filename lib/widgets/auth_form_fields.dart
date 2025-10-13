@@ -23,64 +23,74 @@ class AuthFormFields extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (!isLogin)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 20.0),
-            child: TextField(
-              controller: nameController,
-              keyboardType: TextInputType.name,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Nome',
-                labelStyle: TextStyle(color: Colors.white),
-                prefixIcon: Icon(Icons.person_outline, color: Colors.white),
-              ),
+          TextFormField(
+            controller: nameController,
+            decoration: const InputDecoration(
+              labelText: 'Nome',
+              icon: Icon(Icons.person),
             ),
+            keyboardType: TextInputType.name,
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Por favor, insira seu nome.';
+              }
+              return null;
+            },
           ),
-        TextField(
+        const SizedBox(height: 12),
+        TextFormField(
           controller: emailController,
-          keyboardType: TextInputType.emailAddress,
-          style: const TextStyle(color: Colors.white),
           decoration: const InputDecoration(
             labelText: 'Email',
-            labelStyle: TextStyle(color: Colors.white),
-            prefixIcon: Icon(Icons.email_outlined, color: Colors.white),
+            icon: Icon(Icons.email),
           ),
+          keyboardType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value == null || !value.contains('@')) {
+              return 'Por favor, insira um e-mail válido.';
+            }
+            return null;
+          },
         ),
-        const SizedBox(height: 20.0),
-        TextField(
+        const SizedBox(height: 12),
+        TextFormField(
           controller: passwordController,
           obscureText: !isPasswordVisible,
-          style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             labelText: 'Senha',
-            labelStyle: const TextStyle(color: Colors.white),
-            prefixIcon: const Icon(Icons.lock_outline, color: Colors.white),
+            icon: const Icon(Icons.lock),
             suffixIcon: IconButton(
-              icon: Icon(isPasswordVisible ? Icons.visibility_off : Icons.visibility, color: Colors.white),
+              icon: Icon(
+                isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+              ),
               onPressed: onTogglePasswordVisibility,
             ),
           ),
+          validator: (value) {
+            if (value == null || value.length < 7) {
+              return 'A senha deve ter pelo menos 7 caracteres.';
+            }
+            return null;
+          },
         ),
-        if (!isLogin) ...[
-          const SizedBox(height: 20.0),
-          TextField(
+        if (!isLogin) const SizedBox(height: 12),
+        if (!isLogin)
+          TextFormField(
             controller: confirmPasswordController,
-            obscureText: !isPasswordVisible,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
+            obscureText: true,
+            decoration: const InputDecoration(
               labelText: 'Confirmar Senha',
-              labelStyle: const TextStyle(color: Colors.white),
-              prefixIcon: const Icon(Icons.lock_outline, color: Colors.white),
-              suffixIcon: IconButton(
-                icon: Icon(isPasswordVisible ? Icons.visibility_off : Icons.visibility, color: Colors.white),
-                onPressed: onTogglePasswordVisibility,
-              ),
+              icon: Icon(Icons.lock_outline),
             ),
+            validator: (value) {
+              if (value != passwordController.text) {
+                return 'As senhas não coincidem.';
+              }
+              return null;
+            },
           ),
-        ],
       ],
     );
   }
