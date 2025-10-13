@@ -1,125 +1,139 @@
 import 'package:flutter/material.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
-import '../quiz_brain.dart';
-import '../theme/app_colors.dart';
-import '../widgets/answer_button.dart';
-import '../widgets/question_display.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:grimorio/screens/auth_gate.dart';
+import 'package:grimorio/question.dart';
+import 'package:grimorio/theme/app_colors.dart';
 
 class QuizPage extends StatefulWidget {
-  final int bookIndex;
-
-  const QuizPage({super.key, required this.bookIndex});
+  final List<Question> questions;
+  const QuizPage({super.key, required this.questions});
 
   @override
   State<QuizPage> createState() => _QuizPageState();
 }
 
 class _QuizPageState extends State<QuizPage> {
-  final QuizBrain quizBrain = QuizBrain();
-  List<Widget> scoreKeeper = [];
-  int correctAnswers = 0;
+  int _currentQuestionIndex = 0;
+  int _score = 0;
+  int? selectedAnswerIndex;
+  bool isAnswered = false;
 
-  @override
-  void initState() {
-    super.initState();
-    quizBrain.selectBook(widget.bookIndex);
-  }
+  void _checkAnswer(int index) {
+    if (isAnswered) return;
 
-  void checkAnswer(bool userAnswer) {
-    bool correctAnswer = quizBrain.getCorrectAnswer();
-    int totalQuestions = quizBrain.getTotalQuestions();
+    if (index == widget.questions[_currentQuestionIndex].correctOptionIndex) {
+      _score++;
+    }
 
     setState(() {
-      if (quizBrain.isFinished() == true) {
-        Alert(
-          context: context,
-          style: AlertStyle(
-            backgroundColor: AppColors.azulRoyal,
-            titleStyle: const TextStyle(color: Colors.white),
-            descStyle: TextStyle(color: Colors.grey[300]),
-          ),
-          title: "Fim de Jogo!",
-          desc: "Você acertou $correctAnswers de $totalQuestions perguntas.",
-          buttons: [
-            DialogButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-              color: AppColors.azulForte,
-              child: const Text(
-                "Voltar",
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-            )
-          ],
-        ).show();
+      selectedAnswerIndex = index;
+      isAnswered = true;
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if (_currentQuestionIndex >= widget.questions.length - 1) {
+        _showResultDialog();
       } else {
-        if (userAnswer == correctAnswer) {
-          correctAnswers++;
-          scoreKeeper.add(const Icon(Icons.check, color: AppColors.azulClaro));
-        } else {
-          scoreKeeper.add(Icon(Icons.close, color: Colors.white.withOpacity(0.5)));
-        }
-        quizBrain.nextQuestion();
+        setState(() {
+          _currentQuestionIndex++;
+          selectedAnswerIndex = null;
+          isAnswered = false;
+        });
       }
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(quizBrain.getCurrentBookTitle()),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.of(context).pop(),
+  void _showResultDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.azulRoyal,
+        title: const Text(
+          'Fim do Quiz!',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'Você acertou $_score de ${widget.questions.length} perguntas.',
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              if (mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (context) => const AuthGate()),
-                        (Route<dynamic> route) => false);
-              }
+          TextButton(
+            child: const Text('Voltar',
+                style: TextStyle(color: AppColors.azulClaro, fontSize: 18)),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              Navigator.of(context).pop();
             },
           )
         ],
       ),
+    );
+  }
+
+  Color _getButtonColor(int index) {
+    if (!isAnswered) {
+      return AppColors.azulForte;
+    }
+    if (index == widget.questions[_currentQuestionIndex].correctOptionIndex) {
+      return Colors.green;
+    }
+    if (index == selectedAnswerIndex) {
+      return Colors.red;
+    }
+    return AppColors.azulForte.withOpacity(0.5);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final currentQuestion = widget.questions[_currentQuestionIndex];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Quiz Rápido'),
+      ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            QuestionDisplay(
-              questionText: quizBrain.getQuestionText(),
-            ),
-            AnswerButton(
-              buttonText: 'Verdadeiro',
-              buttonColor: AppColors.azulForte,
-              onPressed: () {
-                checkAnswer(true);
-              },
-            ),
-            AnswerButton(
-              buttonText: 'Falso',
-              buttonColor: AppColors.azulRoyal,
-              onPressed: () {
-                checkAnswer(false);
-              },
-            ),
-            SizedBox(
-              height: 30.0,
-              child: Row(
-                children: scoreKeeper,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Center(
+                  child: Text(
+                    currentQuestion.text,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
-            )
-          ],
+              Expanded(
+                flex: 3,
+                child: ListView.separated(
+                  itemCount: currentQuestion.options.length,
+                  separatorBuilder: (context, index) =>
+                  const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    return ElevatedButton(
+                      onPressed: () => _checkAnswer(index),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _getButtonColor(index),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 20, horizontal: 16),
+                      ),
+                      child: Text(
+                        currentQuestion.options[index],
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

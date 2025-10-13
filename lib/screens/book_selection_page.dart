@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:grimorio/quiz_brain.dart';
 import 'package:grimorio/screens/profile_page.dart';
 import 'package:grimorio/screens/quiz_page.dart';
-import '../quiz_brain.dart';
-import '../theme/app_colors.dart';
+import 'package:grimorio/theme/app_colors.dart';
+import 'package:grimorio/book.dart';
 
 class BookSelectionPage extends StatefulWidget {
   const BookSelectionPage({super.key});
@@ -13,6 +14,13 @@ class BookSelectionPage extends StatefulWidget {
 
 class _BookSelectionPageState extends State<BookSelectionPage> {
   final QuizBrain quizBrain = QuizBrain();
+  late final List<Book> books;
+
+  @override
+  void initState() {
+    super.initState();
+    books = quizBrain.getBooks();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,9 +41,9 @@ class _BookSelectionPageState extends State<BookSelectionPage> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        itemCount: quizBrain.getBookCount(),
+        itemCount: books.length,
         itemBuilder: (context, index) {
-          final book = quizBrain.getBook(index);
+          final book = books[index];
           return Card(
             color: AppColors.azulRoyal,
             elevation: 4.0,
@@ -44,11 +52,15 @@ class _BookSelectionPageState extends State<BookSelectionPage> {
               borderRadius: BorderRadius.circular(12.0),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+              contentPadding:
+              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
               onTap: () {
+                final questionsForBook = quizBrain.getQuestionsForBook(index);
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => QuizPage(bookIndex: index)),
+                  MaterialPageRoute(
+                    builder: (context) => QuizPage(questions: questionsForBook),
+                  ),
                 );
               },
               leading: ClipRRect(
@@ -63,21 +75,18 @@ class _BookSelectionPageState extends State<BookSelectionPage> {
               title: Text(
                 book.title,
                 style: const TextStyle(
-                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
               subtitle: Text(
                 book.author,
-                style: TextStyle(
-                  color: Colors.grey[300],
+                style: const TextStyle(
                   fontSize: 14,
                 ),
               ),
-              trailing: Icon(
+              trailing: const Icon(
                 Icons.arrow_forward_ios,
-                color: Colors.grey[300],
                 size: 16,
               ),
             ),

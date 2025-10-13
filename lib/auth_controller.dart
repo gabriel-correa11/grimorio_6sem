@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:grimorio/auth_service.dart';
 import 'package:grimorio/theme/app_colors.dart';
 
 class AuthController with ChangeNotifier {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final AuthService _authService = AuthService();
 
   bool _isLogin = true;
   bool _isPasswordVisible = false;
+  bool _isLoading = false;
 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -15,6 +18,7 @@ class AuthController with ChangeNotifier {
 
   bool get isLogin => _isLogin;
   bool get isPasswordVisible => _isPasswordVisible;
+  bool get isLoading => _isLoading;
 
   void toggleAuthMode() {
     _isLogin = !_isLogin;
@@ -28,7 +32,43 @@ class AuthController with ChangeNotifier {
   }
 
   Future<void> submit(BuildContext context) async {
-    // Lógica de submit (login/cadastro) continua aqui
+    final isValid = formKey.currentState?.validate() ?? false;
+    if (!isValid) {
+      return;
+    }
+
+    _setLoading(true);
+
+    try {
+      if (_isLogin) {
+        await _authService.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+      } else {
+        await _authService.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+          name: nameController.text.trim(),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String errorMessage = 'Ocorreu um erro desconhecido.';
+      if (e.code == 'weak-password') {
+        errorMessage = 'A senha fornecida é muito fraca.';
+      } else if (e.code == 'email-already-in-use') {
+        errorMessage = 'Este e-mail já está em uso.';
+      } else if (e.code == 'invalid-email') {
+        errorMessage = 'O endereço de e-mail não é válido.';
+      } else if (e.code == 'invalid-credential') {
+        errorMessage = 'Credenciais inválidas. Verifique seu e-mail e senha.';
+      }
+      if (context.mounted) {
+        _showFeedbackDialog(context, 'Erro de Autenticação', errorMessage);
+      }
+    } finally {
+      _setLoading(false);
+    }
   }
 
   Future<void> resetPassword(BuildContext context) async {
@@ -42,11 +82,10 @@ class AuthController with ChangeNotifier {
       return;
     }
 
+    _setLoading(true);
     try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
-
+      await _authService.sendPasswordResetEmail(email: email);
       if (!context.mounted) return;
-
       _showFeedbackDialog(
         context,
         'Sucesso',
@@ -54,12 +93,13 @@ class AuthController with ChangeNotifier {
       );
     } on FirebaseAuthException catch (_) {
       if (!context.mounted) return;
-
       _showFeedbackDialog(
         context,
         'Ocorreu um Erro',
         'Não foi possível enviar o e-mail. Verifique se o endereço está correto e tente novamente.',
       );
+    } finally {
+      _setLoading(false);
     }
   }
 
@@ -78,10 +118,7 @@ class AuthController with ChangeNotifier {
         ),
         content: Text(
           content,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 16),
         ),
         actions: <Widget>[
           TextButton(
@@ -95,7 +132,13 @@ class AuthController with ChangeNotifier {
     );
   }
 
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   void _clearControllers() {
+    formKey.currentState?.reset();
     nameController.clear();
     emailController.clear();
     passwordController.clear();

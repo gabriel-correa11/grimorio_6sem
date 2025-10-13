@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:grimorio/auth_controller.dart'; // Corrigido
+import 'package:grimorio/auth_controller.dart';
 import 'package:grimorio/widgets/auth_header.dart';
 import 'package:grimorio/widgets/auth_form_fields.dart';
 import 'package:grimorio/widgets/auth_action_buttons.dart';
@@ -25,6 +25,7 @@ class AuthPage extends StatelessWidget {
                     children: [
                       AuthHeader(isLogin: controller.isLogin),
                       AuthFormFields(
+                        formKey: controller.formKey,
                         isLogin: controller.isLogin,
                         isPasswordVisible: controller.isPasswordVisible,
                         onTogglePasswordVisibility:
@@ -37,6 +38,7 @@ class AuthPage extends StatelessWidget {
                       ),
                       AuthActionButtons(
                         isLogin: controller.isLogin,
+                        isLoading: controller.isLoading,
                         onSubmit: () => controller.submit(context),
                         onResetPassword: () => controller.resetPassword(context),
                         onToggleAuthMode: controller.toggleAuthMode,
@@ -52,4 +54,3 @@ class AuthPage extends StatelessWidget {
     );
   }
 }
-

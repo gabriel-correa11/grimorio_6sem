@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AuthActionButtons extends StatelessWidget {
   final bool isLogin;
+  final bool isLoading;
   final VoidCallback onSubmit;
   final VoidCallback onResetPassword;
   final VoidCallback onToggleAuthMode;
@@ -9,6 +10,7 @@ class AuthActionButtons extends StatelessWidget {
   const AuthActionButtons({
     super.key,
     required this.isLogin,
+    required this.isLoading,
     required this.onSubmit,
     required this.onResetPassword,
     required this.onToggleAuthMode,
@@ -23,20 +25,31 @@ class AuthActionButtons extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: onResetPassword,
+              onPressed: isLoading ? null : onResetPassword,
               child: const Text('Esqueceu a senha?'),
             ),
           ),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: onSubmit,
-          child: Text(isLogin ? 'Login' : 'Cadastrar'),
+          onPressed: isLoading ? null : onSubmit,
+          child: isLoading
+              ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
+          )
+              : Text(isLogin ? 'Login' : 'Cadastrar'),
         ),
         const SizedBox(height: 12),
         OutlinedButton(
-          onPressed: onToggleAuthMode,
+          onPressed: isLoading ? null : onToggleAuthMode,
           child: Text(
-            isLogin ? 'Não tem uma conta? Cadastre-se' : 'Já tem uma conta? Faça o login',
+            isLogin
+                ? 'Não tem uma conta? Cadastre-se'
+                : 'Já tem uma conta? Faça o login',
           ),
         ),
       ],
