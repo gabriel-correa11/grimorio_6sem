@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:grimorio/screens/auth_page.dart';
-import 'package:grimorio/screens/book_selection_page.dart';
-import 'package:grimorio/screens/verify_email_page.dart';
+import 'package:grimorio/presentation/screens/auth_page.dart';
+import 'package:grimorio/presentation/screens/book_selection_page.dart';
+import 'package:grimorio/presentation/screens/verify_email_page.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});

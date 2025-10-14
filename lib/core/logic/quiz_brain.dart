@@ -1,5 +1,5 @@
-import 'package:grimorio/book.dart';
-import 'package:grimorio/question.dart';
+import 'package:grimorio/core/models/book.dart';
+import 'package:grimorio/core/models/question.dart';
 
 class QuizBrain {
   final List<List<Question>> _booksQuizzes = [

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../auth_service.dart';
+import 'package:grimorio/core/services/auth_service.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});
@@ -35,11 +35,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   Future<void> _resendVerificationEmail() async {
     User? user = AuthService().getCurrentUser();
     if (user != null && !user.emailVerified) {
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
       await user.sendEmailVerification();
 
       if (!context.mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         const SnackBar(
           backgroundColor: Colors.green,
           content: Text('Um novo e-mail de verificação foi enviado!'),

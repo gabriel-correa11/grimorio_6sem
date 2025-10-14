@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:grimorio/auth_service.dart';
-import 'package:grimorio/theme/app_colors.dart';
+import 'package:grimorio/core/services/auth_service.dart';
+import 'package:grimorio/core/services/database_service.dart';
+import 'package:grimorio/presentation/theme/app_colors.dart';
 
 class AuthController with ChangeNotifier {
   final AuthService _authService = AuthService();
+  final DatabaseService _databaseService = DatabaseService();
 
   bool _isLogin = true;
   bool _isPasswordVisible = false;
@@ -14,7 +16,8 @@ class AuthController with ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+  TextEditingController();
 
   bool get isLogin => _isLogin;
   bool get isPasswordVisible => _isPasswordVisible;
@@ -46,11 +49,19 @@ class AuthController with ChangeNotifier {
           password: passwordController.text.trim(),
         );
       } else {
+        final userCredential =
         await _authService.createUserWithEmailAndPassword(
           email: emailController.text.trim(),
           password: passwordController.text.trim(),
           name: nameController.text.trim(),
         );
+
+        if (userCredential.user != null) {
+          await _databaseService.createUserProfile(
+            userCredential.user!,
+            nameController.text.trim(),
+          );
+        }
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'Ocorreu um erro desconhecido.';
@@ -122,7 +133,8 @@ class AuthController with ChangeNotifier {
         ),
         actions: <Widget>[
           TextButton(
-            child: const Text('Ok', style: TextStyle(color: AppColors.azulClaro)),
+            child:
+            const Text('Ok', style: TextStyle(color: AppColors.azulClaro)),
             onPressed: () {
               Navigator.of(ctx).pop();
             },

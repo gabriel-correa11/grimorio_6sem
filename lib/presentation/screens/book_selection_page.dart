@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:grimorio/quiz_brain.dart';
-import 'package:grimorio/screens/profile_page.dart';
-import 'package:grimorio/screens/quiz_page.dart';
-import 'package:grimorio/theme/app_colors.dart';
-import 'package:grimorio/book.dart';
+import 'package:grimorio/core/logic/quiz_brain.dart';
+import 'package:grimorio/presentation/screens/profile_page.dart';
+import 'package:grimorio/presentation/screens/quiz_page.dart';
+import 'package:grimorio/presentation/theme/app_colors.dart';
+import 'package:grimorio/core/models/book.dart';
 
 class BookSelectionPage extends StatefulWidget {
   const BookSelectionPage({super.key});

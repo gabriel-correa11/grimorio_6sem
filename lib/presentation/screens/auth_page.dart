@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:grimorio/auth_controller.dart';
-import 'package:grimorio/widgets/auth_header.dart';
-import 'package:grimorio/widgets/auth_form_fields.dart';
-import 'package:grimorio/widgets/auth_action_buttons.dart';
+import 'package:grimorio/core/providers/auth_controller.dart';
+import 'package:grimorio/presentation/widgets/auth_header.dart';
+import 'package:grimorio/presentation/widgets/auth_form_fields.dart';
+import 'package:grimorio/presentation/widgets/auth_action_buttons.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});

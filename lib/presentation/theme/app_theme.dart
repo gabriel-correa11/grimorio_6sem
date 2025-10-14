@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grimorio/theme/app_colors.dart';
+import 'package:grimorio/presentation/theme/app_colors.dart';
 
 final ThemeData appTheme = ThemeData(
   primaryColor: AppColors.azulForte,

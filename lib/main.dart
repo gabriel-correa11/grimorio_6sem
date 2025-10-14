@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:grimorio/firebase_options.dart';
-import 'package:grimorio/screens/auth_gate.dart';
-import 'package:grimorio/theme/app_theme.dart';
+import 'package:grimorio/presentation/screens/auth_gate.dart';
+import 'package:grimorio/presentation/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
