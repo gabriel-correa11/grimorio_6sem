@@ -1,6 +1,3 @@
-Entendido. Sem problemas. É melhor não ter uma imagem de placeholder. Boa observação.
-
-Aqui está a versão atualizada do README.md, já sem a referência à logo. Pode copiar e colar diretamente.
 
 <div align="center">
 <h1>Projeto Grimório</h1>
@@ -15,7 +12,7 @@ Status do Projeto: Em Desenvolvimento Ativo 🚀
 
 Este é o repositório do nosso projeto de faculdade, o Grimório. A proposta é criar um aplicativo mobile em Flutter que utiliza gamificação para incentivar o hábito da leitura, transformando cada livro em uma jornada de progressão e conhecimento.
 
-1. O Problema que Queremos Resolver
+1. O problema que queremos resolver
 Em um mundo onde livros competem pela atenção com redes sociais e jogos que oferecem recompensas instantâneas, o Grimório busca usar essa mesma lógica a favor da leitura. O aplicativo foi projetado para dar ao usuário uma sensação tangível de progresso e conquista a cada capítulo lido e quiz finalizado.
 
 2. Arquitetura e Decisões Técnicas
