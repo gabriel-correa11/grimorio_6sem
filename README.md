@@ -1,5 +1,8 @@
+Entendido. Sem problemas. É melhor não ter uma imagem de placeholder. Boa observação.
+
+Aqui está a versão atualizada do README.md, já sem a referência à logo. Pode copiar e colar diretamente.
+
 <div align="center">
-<img src="https://raw.githubusercontent.com/gabriel-correa11/grimorio_6sem/main/assets/readme/logo.png" alt="Grimorio Logo" width="150"/>
 <h1>Projeto Grimório</h1>
 <h3><a href="#">Português</a> • <a href="#english-version">English</a></h3>
 </div>
@@ -88,7 +91,6 @@ English Version
 <summary>Click to expand</summary>
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/gabriel-correa11/grimorio_6sem/main/assets/readme/logo.png" alt="Grimorio Logo" width="150"/>
 <h1>Project Grimorio</h1>
 </div>
 
