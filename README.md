@@ -1,129 +1,169 @@
-<div align="center">
-<h3><a href="#">Português</a> • <a href="#">English</a></h3>
-</div>
-<hr>
 
-🏰 Projeto Grimorio
 <div align="center">
-
+<h1>Projeto Grimório</h1>
+<h3><a href="#">Português</a> • <a href="#english-version">English</a></h3>
 </div>
 
-Status do Projeto: Em Desenvolvimento 🚀
+<div align="center">
 
-Este é o repositório do nosso projeto de faculdade, o Grimorio. A ideia é criar um app em Flutter que usa elementos de jogos para incentivar o hábito da leitura, transformando cada livro em uma jornada interativa.
+Status do Projeto: Em Desenvolvimento Ativo 🚀
 
-<details>
-<summary>View in English</summary>
+</div>
 
-Project Status: In Development 🚀
+Este é o repositório do nosso projeto de faculdade, o Grimório. A proposta é criar um aplicativo mobile em Flutter que utiliza gamificação para incentivar o hábito da leitura, transformando cada livro em uma jornada de progressão e conhecimento.
 
-This is the repository for our college project, Grimorio. The idea is to create an app in Flutter that uses gamification elements to encourage the habit of reading, turning each book into an interactive journey.
-
-</details>
-
-1. O Problema que Queremos Resolver
-   Hoje em dia, os livros competem pela nossa atenção com redes sociais e jogos, que oferecem recompensas rápidas. Nossa ideia com o Grimorio é usar essa mesma lógica a favor da leitura, criando um app que dê ao usuário uma sensação de progresso e conquista a cada capítulo ou livro finalizado.
-
-<details>
-<summary>View in English</summary>
-
-1. The Problem We Want to Solve
-   Nowadays, books compete for our attention with social media and games, which offer quick rewards. Our idea with Grimorio is to use this same logic in favor of reading, creating an app that gives the user a sense of progress and achievement with each chapter or book finished.
-
-</details>
+1. O problema que queremos resolver
+Em um mundo onde livros competem pela atenção com redes sociais e jogos que oferecem recompensas instantâneas, o Grimório busca usar essa mesma lógica a favor da leitura. O aplicativo foi projetado para dar ao usuário uma sensação tangível de progresso e conquista a cada capítulo lido e quiz finalizado.
 
 2. Arquitetura e Decisões Técnicas
-   Escolhemos nossas ferramentas pensando em agilidade e performance:
+O projeto foi construído com foco em escalabilidade, manutenibilidade e performance, utilizando uma arquitetura limpa e tecnologias modernas.
 
-Flutter & Dart: A escolha principal. Com o Flutter, podemos criar um app para Android e iOS com um único código. Como já tínhamos uma base de orientação a objetos com Java, a transição para o Dart foi bem tranquila.
+Flutter & Dart: Escolha principal para o desenvolvimento multiplataforma (Android/iOS) a partir de um código único. A familiaridade prévia com orientação a objetos facilitou a adoção do Dart.
 
-Firebase: Para cuidar do backend. Usamos o Firebase Authentication para ter um sistema de login e cadastro seguro (com e-mail, senha e verificação) sem precisar construir um servidor do zero.
+Firebase (Backend as a Service):
 
-Arquitetura Limpa e Gerenciamento de Estado:
+Firebase Authentication: Utilizado para um sistema de autenticação robusto e seguro, incluindo cadastro com e-mail/senha, verificação de e-mail e recuperação de senha.
 
-Separação de Responsabilidades: Desde o início, separamos o código em camadas: screens para as telas, widgets para componentes reutilizáveis e classes de lógica.
+Cloud Firestore: O coração da nossa gamificação. Utilizado como um banco de dados NoSQL para salvar o perfil e o progresso de cada usuário (XP, nível, último desempenho, etc.) de forma persistente e em tempo real.
 
-State Management com Provider: A tela de autenticação ficou muito complexa. Para resolver isso, refatoramos a arquitetura: criamos uma classe AuthController que gerencia toda a lógica e estado da página, enquanto a UI (AuthPage) apenas exibe os dados. Isso deixou o código muito mais limpo e fácil de manter.
+Arquitetura em Camadas (Refatorada): O código foi reestruturado para seguir princípios de Arquitetura Limpa, separando as responsabilidades de forma clara:
 
-<details>
-<summary>View in English</summary>
+core: Camada que contém toda a lógica de negócio, modelos de dados e comunicação com serviços externos (Firebase). É o cérebro do app.
 
-2. Architecture and Technical Decisions
-   We chose our tools thinking about agility and performance:
+presentation: Camada responsável por tudo que o usuário vê e interage (telas, widgets e tema visual).
 
-Flutter & Dart: Our main choice. With Flutter, we can create an app for Android and iOS from a single codebase. As we already had a background in object-oriented programming with Java, the transition to Dart was very smooth.
-
-Firebase: To take care of the backend. We use Firebase Authentication to have a secure login and registration system (with email, password, and verification) without needing to build a server from scratch.
-
-Clean Architecture and State Management:
-
-Separation of Concerns: From the beginning, we separated the code into layers: screens for the pages, widgets for reusable components, and logic classes.
-
-State Management with Provider: The authentication screen started to get very complex. To solve this, we refactored the architecture: we created an AuthController class that manages all the logic and page state, while the UI (AuthPage) just displays the data. This made the code much cleaner and easier to maintain.
-
-</details>
+Gerenciamento de Estado com Provider: Para lidar com a complexidade do estado da UI, especialmente na autenticação, utilizamos o Provider. O AuthController centraliza toda a lógica de formulários, validação e comunicação com os serviços, mantendo a camada de presentation limpa e reativa.
 
 3. O que já está funcionando (Features)
-   Sistema de Autenticação Completo: Cadastro, login, verificação de e-mail, "esqueci a senha", e validação de campos. Tudo gerenciado por um Controller separado da UI.
+✅ Sistema de Autenticação Completo: Cadastro, login, verificação de e-mail e recuperação de senha.
 
-UI Componentizada: A tela de autenticação foi dividida em múltiplos widgets (AuthHeader, AuthFormFields, AuthActionButtons), deixando o código mais organizado.
+✅ Quiz de Múltipla Escolha: Sistema de quiz interativo com feedback visual instantâneo (certo/errado) e avanço automático.
 
-Módulo de Quiz Funcional: O fluxo principal do app (login -> seleção de livro -> quiz -> pontuação) está completo.
+✅ Gamificação e Progressão:
 
-Tema Visual Centralizado: Um ThemeData global garante que todo o app tenha uma aparência consistente.
+Sistema de Níveis e XP: O usuário ganha XP ao completar quizzes, subindo de nível automaticamente.
 
-<details>
-<summary>View in English</summary>
+Títulos Mágicos: Cada nível corresponde a um título (Aprendiz, Escrivão, Mago), reforçando a jornada do usuário.
 
-3. What's Already Working (Features)
-   Complete Authentication System: User registration, login, email verification, "forgot password," and field validation. Everything is managed by a Controller separated from the UI.
+Persistência de Dados: O perfil do usuário, com seu XP e nível, é salvo no Cloud Firestore.
 
-Component-Based UI: The authentication screen was broken down into multiple widgets (AuthHeader, AuthFormFields, AuthActionButtons), making the code more organized.
+✅ Tela "Meu Grimório" (Perfil Dinâmico):
 
-Functional Quiz Module: The main app flow (login -> book selection -> quiz -> score) is complete.
+Exibe o nome, nível e título mágico do usuário.
 
-Centralized Visual Theme: A global ThemeData ensures the entire app has a consistent look and feel.
+Mostra uma barra de progresso visual para o próximo nível.
 
-</details>
+Apresenta um card com o desempenho do último quiz realizado.
+
+✅ Estrutura de Código Profissional: O projeto foi totalmente refatorado para uma arquitetura em camadas (core e presentation), garantindo organização e escalabilidade.
+
+✅ Tema Visual Centralizado: Um ThemeData global garante uma identidade visual coesa em todo o aplicativo.
 
 4. Próximos Passos
-   Tela de Perfil: Construir a tela de perfil do usuário com a opção de logout.
+Agora com a fundação do app sólida, nosso foco se volta para aprofundar a experiência de gamificação e conteúdo.
 
-Salvar Progresso: Usar o Firestore para salvar a pontuação e os livros completos.
+⏳ Rastrear Progresso por Livro: Implementar a lógica para salvar a conclusão de cada quiz, permitindo estatísticas como "Tomos Lidos" e a aplicação de regras de XP decrescente em repetições.
 
-Evoluir o Quiz: Mudar as perguntas para o formato de Múltipla Escolha.
+⏳ Implementar o Mapa de Mundos: Criar a interface visual para cada livro, onde os capítulos são "nós" a serem desbloqueados, como descrito na documentação (RF3).
 
-<details>
-<summary>View in English</summary>
+⏳ Criar a "Estante de Conquistas": Desenvolver o sistema de badges e achievements para recompensar feitos específicos dos usuários.
 
-4. Next Steps
-   Profile Screen: Build the user profile screen with a logout option.
-
-Save Progress: Use Firestore to save scores and completed books.
-
-Evolve the Quiz: Change the questions to a Multiple Choice format.
-
-</details>
+⏳ Otimização de Performance: Investigar e resolver a lentidão inicial do aplicativo (Skipped frames) para garantir uma experiência de usuário fluida desde o primeiro segundo.
 
 5. Como Executar o Projeto
-   Clone o repositório.
+Clone o repositório: git clone https://github.com/gabriel-correa11/grimorio_6sem.git
 
 Garanta que o Flutter está instalado (flutter doctor).
 
-Rode flutter pub get para baixar as dependências.
+Execute flutter pub get para baixar as dependências.
 
-Rode flutter run para iniciar o app.
+Execute flutter run para iniciar o aplicativo em um emulador ou dispositivo.
 
+<hr>
+
+<div id="english-version"></div>
+
+English Version
 <details>
-<summary>View in English</summary>
+<summary>Click to expand</summary>
+
+<div align="center">
+<h1>Project Grimorio</h1>
+</div>
+
+<div align="center">
+
+Project Status: In Active Development 🚀
+
+</div>
+
+This is the repository for our college project, Grimorio. The goal is to create a mobile application in Flutter that uses gamification to encourage the reading habit by turning each book into a journey of progression and knowledge.
+
+1. The Problem We Want to Solve
+In a world where books compete for attention with social media and games that offer instant rewards, Grimorio aims to use the same logic in favor of reading. The app is designed to give the user a tangible sense of progress and achievement with each completed chapter and quiz.
+
+2. Architecture and Technical Decisions
+The project was built with a focus on scalability, maintainability, and performance, using a clean architecture and modern technologies.
+
+Flutter & Dart: The primary choice for cross-platform development (Android/iOS) from a single codebase. Our previous experience with object-oriented programming made the transition to Dart smooth.
+
+Firebase (Backend as a Service):
+
+Firebase Authentication: Used for a robust and secure authentication system, including email/password sign-up, email verification, and password recovery.
+
+Cloud Firestore: The heart of our gamification. Used as a NoSQL database to persistently save each user's profile and progress (XP, level, last quiz performance, etc.) in real-time.
+
+Layered Architecture (Refactored): The code was restructured to follow Clean Architecture principles, clearly separating responsibilities:
+
+core: The layer containing all business logic, data models, and communication with external services (Firebase). It's the app's brain.
+
+presentation: The layer responsible for everything the user sees and interacts with (screens, widgets, and visual theme).
+
+State Management with Provider: To handle UI state complexity, especially in authentication, we used Provider. The AuthController centralizes all form logic, validation, and communication with services, keeping the presentation layer clean and reactive.
+
+3. What's Already Working (Features)
+✅ Complete Authentication System: Sign-up, login, email verification, and password recovery.
+
+✅ Multiple-Choice Quiz: An interactive quiz system with instant visual feedback (correct/incorrect) and automatic progression.
+
+✅ Gamification and Progression:
+
+Level and XP System: Users earn XP by completing quizzes, leveling up automatically.
+
+Magical Titles: Each level corresponds to a title (Apprentice, Scribe, Mage), reinforcing the user's journey.
+
+Data Persistence: The user's profile, with their XP and level, is saved in Cloud Firestore.
+
+✅ "My Grimoire" Screen (Dynamic Profile):
+
+Displays the user's name, level, and magical title.
+
+Shows a visual progress bar for the next level.
+
+Presents a card with the performance from the last quiz taken.
+
+✅ Professional Code Structure: The project was fully refactored into a layered architecture (core and presentation), ensuring organization and scalability.
+
+✅ Centralized Visual Theme: A global ThemeData ensures a cohesive visual identity throughout the app.
+
+4. Next Steps
+With the app's foundation now solid, our focus shifts to deepening the gamification experience and content.
+
+⏳ Track Progress per Book: Implement the logic to save the completion of each quiz, enabling stats like "Tomes Read" and applying diminishing XP rules for repeats.
+
+⏳ Implement the World Map: Create the visual interface for each book, where chapters are "nodes" to be unlocked, as described in the documentation (RF3).
+
+⏳ Create the "Achievement Shelf": Develop the system for badges and achievements to reward specific user accomplishments.
+
+⏳ Performance Optimization: Investigate and resolve the app's initial startup slowness (Skipped frames) to ensure a fluid user experience from the very first second.
 
 5. How to Run the Project
-   Clone the repository.
+Clone the repository: git clone https://github.com/gabriel-correa11/grimorio_6sem.git
 
 Ensure Flutter is installed (flutter doctor).
 
 Run flutter pub get to download dependencies.
 
-Run flutter run to start the app.
+Run flutter run to start the application on an emulator or device.
 
 </details>
