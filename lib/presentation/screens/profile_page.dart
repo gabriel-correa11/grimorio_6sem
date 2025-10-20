@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+// import 'package:grimorio/core/logic/achievement_logic.dart';
+// import 'package:grimorio/core/models/achievement.dart';
 import 'package:grimorio/core/services/auth_service.dart';
 import 'package:grimorio/core/services/database_service.dart';
 import 'package:grimorio/core/logic/game_logic.dart';
+import 'package:grimorio/presentation/screens/achievements_page.dart';
 import 'package:grimorio/presentation/theme/app_colors.dart';
 import 'package:grimorio/core/models/user_profile.dart';
 
@@ -19,9 +22,15 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+    _loadUserProfile();
+  }
+
+  void _loadUserProfile() {
     final user = _authService.getCurrentUser();
     if (user != null) {
-      _userProfileFuture = _databaseService.getUserProfile(user);
+      setState(() {
+        _userProfileFuture = _databaseService.getUserProfile(user);
+      });
     }
   }
 
@@ -36,34 +45,44 @@ class _ProfilePageState extends State<ProfilePage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
-            return const Center(
-                child: Text('Não foi possível carregar o perfil.'));
-          }
-          final userProfile = snapshot.data!;
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            return Center(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildGuardianSeal(userProfile),
-                  const SizedBox(height: 16),
-                  Center(
-                      child: Text(userProfile.name,
-                          style: const TextStyle(
-                              fontSize: 26, fontWeight: FontWeight.bold))),
-                  const SizedBox(height: 16),
-                  _buildMasteryInsignia(userProfile),
-                  const SizedBox(height: 32),
-                  _buildProgressSection(userProfile),
-                  const SizedBox(height: 24),
-                  if (userProfile.lastQuizScore != null)
-                    _buildLastScoreCard(userProfile),
-                  const SizedBox(height: 40),
-                  _buildLogoutButton(),
+                  const Text('Não foi possível carregar o perfil.'),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                      onPressed: _loadUserProfile, child: const Text('Tentar Novamente'))
                 ],
               ),
+            );
+          }
+          final userProfile = snapshot.data!;
+          return RefreshIndicator(
+            onRefresh: () async => _loadUserProfile(),
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              children: [
+                const SizedBox(height: 24),
+                _buildGuardianSeal(userProfile),
+                const SizedBox(height: 16),
+                Center(
+                    child: Text(userProfile.name,
+                        style: const TextStyle(
+                            fontSize: 26, fontWeight: FontWeight.bold))),
+                const SizedBox(height: 16),
+                _buildMasteryInsignia(userProfile),
+                const SizedBox(height: 32),
+                _buildProgressSection(userProfile),
+                const SizedBox(height: 24),
+                _buildAchievementsButton(context, userProfile),
+                const SizedBox(height: 24),
+                if (userProfile.lastQuizScore != null)
+                  _buildLastScoreCard(userProfile),
+                const SizedBox(height: 40),
+                _buildLogoutButton(),
+                const SizedBox(height: 16),
+              ],
             ),
           );
         },
@@ -128,6 +147,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Text(
           _getProgressCopy(profile),
           style: TextStyle(fontSize: 16, color: Colors.white.withAlpha(204)),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 12),
         Container(
@@ -164,6 +184,21 @@ class _ProfilePageState extends State<ProfilePage> {
     return 'A sabedoria se acumula a cada página.';
   }
 
+  Widget _buildAchievementsButton(BuildContext context, UserProfile profile) {
+    return ElevatedButton.icon(
+      icon: const Icon(Icons.shield_outlined), // Ou Icons.emoji_events
+      label: const Text('Minhas Conquistas'),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AchievementsPage(unlockedIds: profile.unlockedAchievementIds),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildLastScoreCard(UserProfile profile) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -177,7 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
           const Icon(Icons.history_edu, color: AppColors.azulClaro),
           const SizedBox(width: 12),
           Text(
-            'Último Desempenho: ${profile.lastQuizScore}/${profile.lastQuizTotalQuestions}',
+            'Último Desempenho: ${profile.lastQuizScore}/${profile.lastQuizTotalQuestions ?? '?'}',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -193,6 +228,9 @@ class _ProfilePageState extends State<ProfilePage> {
       child: TextButton(
         onPressed: () async {
           await _authService.signOut();
+          if (mounted) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
         },
         child: Text(
           'Sair da Conta',

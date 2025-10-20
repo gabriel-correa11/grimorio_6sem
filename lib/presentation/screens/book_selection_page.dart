@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grimorio/core/logic/quiz_brain.dart';
 import 'package:grimorio/presentation/screens/profile_page.dart';
-import 'package:grimorio/presentation/screens/quiz_page.dart';
+import 'package:grimorio/presentation/screens/world_map_page.dart';
 import 'package:grimorio/presentation/theme/app_colors.dart';
 import 'package:grimorio/core/models/book.dart';
 
@@ -55,11 +55,10 @@ class _BookSelectionPageState extends State<BookSelectionPage> {
               contentPadding:
               const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
               onTap: () {
-                final questionsForBook = quizBrain.getQuestionsForBook(index);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => QuizPage(questions: questionsForBook),
+                    builder: (context) => WorldMapPage(book: book),
                   ),
                 );
               },

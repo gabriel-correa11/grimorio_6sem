@@ -83,10 +83,16 @@ class AuthFormFields extends StatelessWidget {
           if (!isLogin)
             TextFormField(
               controller: confirmPasswordController,
-              obscureText: true,
-              decoration: const InputDecoration(
+              obscureText: !isPasswordVisible,
+              decoration: InputDecoration(
                 labelText: 'Confirmar Senha',
-                icon: Icon(Icons.lock_outline),
+                icon: const Icon(Icons.lock_outline),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: onTogglePasswordVisibility,
+                ),
               ),
               validator: (value) {
                 if (value != passwordController.text) {

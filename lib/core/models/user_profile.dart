@@ -8,6 +8,9 @@ class UserProfile {
   final int level;
   final int? lastQuizScore;
   final int? lastQuizTotalQuestions;
+  final int completedBooksCount;
+  final int chaptersAttemptedCount;
+  final List<String> unlockedAchievementIds;
 
   UserProfile({
     required this.uid,
@@ -17,6 +20,9 @@ class UserProfile {
     required this.level,
     this.lastQuizScore,
     this.lastQuizTotalQuestions,
+    required this.completedBooksCount,
+    required this.chaptersAttemptedCount,
+    required this.unlockedAchievementIds,
   });
 
   String get title => GameLogic.getTitleForLevel(level);
@@ -35,11 +41,17 @@ class UserProfile {
   double get levelProgressPercent {
     if (level >= 10) return 1.0;
     final currentLevelTotalXp = xpForNextLevel - xpForCurrentLevel;
+    if (currentLevelTotalXp <= 0) return 0.0;
     final xpInCurrentLevel = xp - xpForCurrentLevel;
-    return xpInCurrentLevel / currentLevelTotalXp;
+    return (xpInCurrentLevel / currentLevelTotalXp).clamp(0.0, 1.0);
   }
 
-  factory UserProfile.fromMap(Map<String, dynamic> data, String documentId) {
+  factory UserProfile.fromMap(
+      Map<String, dynamic> data,
+      String documentId,
+      int completedBooks,
+      int chaptersAttempted,
+      List<String> unlockedAchievements) {
     return UserProfile(
       uid: documentId,
       name: data['name'] ?? '',
@@ -48,6 +60,9 @@ class UserProfile {
       level: data['level'] ?? 1,
       lastQuizScore: data['lastQuizScore'],
       lastQuizTotalQuestions: data['lastQuizTotalQuestions'],
+      completedBooksCount: completedBooks,
+      chaptersAttemptedCount: chaptersAttempted,
+      unlockedAchievementIds: unlockedAchievements,
     );
   }
 }

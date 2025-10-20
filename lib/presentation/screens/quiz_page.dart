@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:grimorio/core/logic/achievement_logic.dart';
+//import 'package:grimorio/core/models/achievement.dart';
 import 'package:grimorio/core/services/auth_service.dart';
 import 'package:grimorio/core/services/database_service.dart';
 import 'package:grimorio/core/models/question.dart';
@@ -7,7 +9,9 @@ import 'package:grimorio/core/models/user_profile.dart';
 
 class QuizPage extends StatefulWidget {
   final List<Question> questions;
-  const QuizPage({super.key, required this.questions});
+  final String bookId;
+
+  const QuizPage({super.key, required this.questions, required this.bookId});
 
   @override
   State<QuizPage> createState() => _QuizPageState();
@@ -49,30 +53,51 @@ class _QuizPageState extends State<QuizPage> {
   Future<void> _handleQuizCompletion() async {
     final user = _authService.getCurrentUser();
     if (user == null) {
-      _showResultDialog();
+      _showResultDialog(true);
       return;
     }
+
+    final isFirstCompletion = await _databaseService.saveQuizCompletion(
+      user.uid,
+      widget.bookId,
+      _score,
+      widget.questions.length,
+    );
 
     final didLevelUp = await _databaseService.updateUserProgressAfterQuiz(
       user.uid,
       _score,
       widget.questions.length,
+      isFirstCompletion,
     );
 
-    if (!mounted) {
-      return;
-    }
-    _showResultDialog();
+    if (!mounted) return;
+    _showResultDialog(isFirstCompletion);
 
-    if (didLevelUp) {
-      final updatedProfile = await _databaseService.getUserProfile(user);
-      if (updatedProfile != null) {
+    UserProfile? updatedProfile = await _databaseService.getUserProfile(user);
+    if (updatedProfile != null) {
+      final newlyUnlocked = AchievementLogic.checkAchievements(
+        updatedProfile,
+        _score,
+        widget.questions.length,
+        updatedProfile.unlockedAchievementIds,
+      );
+
+      if (newlyUnlocked.isNotEmpty) {
+        await _databaseService.unlockAchievements(user.uid, newlyUnlocked);
+        if (mounted) {
+          _showAchievementUnlockedNotifications(newlyUnlocked);
+        }
+      }
+
+      if (didLevelUp && mounted) {
         _showLevelUpDialog(updatedProfile);
       }
     }
   }
 
-  void _showResultDialog() {
+  void _showResultDialog(bool isFirstCompletion) {
+    final xpGained = isFirstCompletion ? _score * 10 : (_score * 10 / 2).round();
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -81,7 +106,7 @@ class _QuizPageState extends State<QuizPage> {
         title: const Text('Fim do Quiz!',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         content: Text(
-            'Você acertou $_score de ${widget.questions.length} perguntas e ganhou ${_score * 10} XP!',
+            'Você acertou $_score de ${widget.questions.length} perguntas e ganhou $xpGained XP!',
             style: const TextStyle(color: Colors.white, fontSize: 16)),
         actions: [
           TextButton(
@@ -120,6 +145,38 @@ class _QuizPageState extends State<QuizPage> {
         ],
       ),
     );
+  }
+
+  void _showAchievementUnlockedNotifications(List<String> achievementIds) {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    for (String id in achievementIds) {
+      final achievement = AchievementLogic.getAchievementById(id);
+      if (achievement != null) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            backgroundColor: AppColors.azulClaro,
+            content: Row(
+              children: [
+                Icon(
+                    IconData(int.parse(achievement.iconCodePoint),
+                        fontFamily: 'MaterialIcons'),
+                    color: Colors.white),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Conquista Desbloqueada: ${achievement.name}!',
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
   }
 
   Color _getButtonColor(int index) {
