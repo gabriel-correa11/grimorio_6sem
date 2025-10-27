@@ -4,6 +4,7 @@ import 'package:grimorio/core/providers/auth_controller.dart';
 import 'package:grimorio/presentation/widgets/auth_header.dart';
 import 'package:grimorio/presentation/widgets/auth_form_fields.dart';
 import 'package:grimorio/presentation/widgets/auth_action_buttons.dart';
+import 'package:grimorio/presentation/theme/app_colors.dart';
 
 class AuthPage extends StatelessWidget {
   const AuthPage({super.key});
@@ -35,9 +36,45 @@ class AuthPage extends StatelessWidget {
                         passwordController: controller.passwordController,
                         confirmPasswordController:
                         controller.confirmPasswordController,
-                        termsAccepted: controller.termsAccepted,
-                        onToggleTerms: controller.toggleTermsAccepted,
                       ),
+                      if (!controller.isLogin)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16.0),
+                          child: TextButton(
+                            onPressed: () => controller.showTermsDialog(context),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  controller.termsAccepted
+                                      ? 'Termos e Política Aceitos'
+                                      : 'Ler e Aceitar Termos e Política',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: controller.termsAccepted
+                                        ? Colors.green.shade300
+                                        : Colors.white,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: controller.termsAccepted
+                                        ? Colors.green.shade300
+                                        : Colors.white,
+                                    decorationThickness: 1.5,
+                                  ),
+                                ),
+                                if (controller.termsAccepted)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Icon(Icons.check_circle, color: Colors.green.shade300, size: 18),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
                       AuthActionButtons(
                         isLogin: controller.isLogin,
                         isLoading: controller.isLoading,
