@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:grimorio/presentation/theme/app_colors.dart';
+
 
 class AuthFormFields extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -9,6 +11,8 @@ class AuthFormFields extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
+  final bool termsAccepted;
+  final Function(bool?) onToggleTerms;
 
   const AuthFormFields({
     super.key,
@@ -20,6 +24,8 @@ class AuthFormFields extends StatelessWidget {
     required this.emailController,
     required this.passwordController,
     required this.confirmPasswordController,
+    required this.termsAccepted,
+    required this.onToggleTerms,
   });
 
   @override
@@ -100,6 +106,20 @@ class AuthFormFields extends StatelessWidget {
                 }
                 return null;
               },
+            ),
+          if (!isLogin) const SizedBox(height: 16),
+          if (!isLogin)
+            CheckboxListTile(
+              value: termsAccepted,
+              onChanged: onToggleTerms,
+              title: Text(
+                'Li e aceito os Termos e Condições e a Política de Privacidade.',
+                style: TextStyle(fontSize: 14, color: Colors.white.withAlpha(200)),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+              contentPadding: EdgeInsets.zero,
+              activeColor: AppColors.azulClaro,
+              dense: true,
             ),
         ],
       ),

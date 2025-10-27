@@ -11,6 +11,7 @@ class AuthController with ChangeNotifier {
   bool _isLogin = true;
   bool _isPasswordVisible = false;
   bool _isLoading = false;
+  bool _termsAccepted = false;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
@@ -22,9 +23,11 @@ class AuthController with ChangeNotifier {
   bool get isLogin => _isLogin;
   bool get isPasswordVisible => _isPasswordVisible;
   bool get isLoading => _isLoading;
+  bool get termsAccepted => _termsAccepted;
 
   void toggleAuthMode() {
     _isLogin = !_isLogin;
+    _termsAccepted = false;
     _clearControllers();
     notifyListeners();
   }
@@ -34,11 +37,23 @@ class AuthController with ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleTermsAccepted(bool? value) {
+    _termsAccepted = value ?? false;
+    notifyListeners();
+  }
+
   Future<void> submit(BuildContext context) async {
     final isValid = formKey.currentState?.validate() ?? false;
     if (!isValid) {
       return;
     }
+
+    if (!_isLogin && !_termsAccepted) {
+      _showFeedbackDialog(context, 'Termos e Condições',
+          'Você precisa aceitar os Termos e Condições e a Política de Privacidade para criar uma conta.');
+      return;
+    }
+
 
     _setLoading(true);
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:grimorio/core/logic/achievement_logic.dart';
-//import 'package:grimorio/core/models/achievement.dart';
 import 'package:grimorio/core/services/auth_service.dart';
 import 'package:grimorio/core/services/database_service.dart';
 import 'package:grimorio/core/models/question.dart';
 import 'package:grimorio/presentation/theme/app_colors.dart';
 import 'package:grimorio/core/models/user_profile.dart';
+import 'dart:math';
 
 class QuizPage extends StatefulWidget {
   final List<Question> questions;
@@ -20,25 +20,62 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   final AuthService _authService = AuthService();
   final DatabaseService _databaseService = DatabaseService();
+  late List<Question> _shuffledQuestions;
+  late List<List<QuestionOptions>> _shuffledOptionsPerQuestion;
+  late List<int> _correctAnswerOriginalIndex;
 
   int _currentQuestionIndex = 0;
   int _score = 0;
   int? selectedAnswerIndex;
   bool isAnswered = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _initializeQuiz();
+  }
+
+  void _initializeQuiz() {
+    _shuffledQuestions = List.from(widget.questions);
+    _shuffledQuestions.shuffle(Random());
+
+    _shuffledOptionsPerQuestion = [];
+    _correctAnswerOriginalIndex = [];
+
+    for (var question in _shuffledQuestions) {
+      List<QuestionOptions> optionsCopy = List.from(question.options);
+      _correctAnswerOriginalIndex.add(optionsCopy.indexWhere((opt) => opt.isCorrect));
+      optionsCopy.shuffle(Random());
+      _shuffledOptionsPerQuestion.add(optionsCopy);
+    }
+
+    _currentQuestionIndex = 0;
+    _score = 0;
+    selectedAnswerIndex = null;
+    isAnswered = false;
+  }
+
+
   void _checkAnswer(int index) {
     if (isAnswered) {
       return;
     }
-    if (index == widget.questions[_currentQuestionIndex].correctOptionIndex) {
+
+    final List<QuestionOptions> currentOptions = _shuffledOptionsPerQuestion[_currentQuestionIndex];
+    final QuestionOptions selectedOption = currentOptions[index];
+
+    if (selectedOption.isCorrect) {
       _score++;
     }
+
     setState(() {
       selectedAnswerIndex = index;
       isAnswered = true;
     });
-    Future.delayed(const Duration(seconds: 1), () {
-      if (_currentQuestionIndex >= widget.questions.length - 1) {
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      if (_currentQuestionIndex >= _shuffledQuestions.length - 1) {
         _handleQuizCompletion();
       } else {
         setState(() {
@@ -53,7 +90,7 @@ class _QuizPageState extends State<QuizPage> {
   Future<void> _handleQuizCompletion() async {
     final user = _authService.getCurrentUser();
     if (user == null) {
-      _showResultDialog(true);
+      if(mounted) _showResultDialog(true);
       return;
     }
 
@@ -61,13 +98,13 @@ class _QuizPageState extends State<QuizPage> {
       user.uid,
       widget.bookId,
       _score,
-      widget.questions.length,
+      _shuffledQuestions.length,
     );
 
     final didLevelUp = await _databaseService.updateUserProgressAfterQuiz(
       user.uid,
       _score,
-      widget.questions.length,
+      _shuffledQuestions.length,
       isFirstCompletion,
     );
 
@@ -79,7 +116,7 @@ class _QuizPageState extends State<QuizPage> {
       final newlyUnlocked = AchievementLogic.checkAchievements(
         updatedProfile,
         _score,
-        widget.questions.length,
+        _shuffledQuestions.length,
         updatedProfile.unlockedAchievementIds,
       );
 
@@ -97,6 +134,7 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void _showResultDialog(bool isFirstCompletion) {
+    if (!mounted) return;
     final xpGained = isFirstCompletion ? _score * 10 : (_score * 10 / 2).round();
     showDialog(
       context: context,
@@ -106,7 +144,7 @@ class _QuizPageState extends State<QuizPage> {
         title: const Text('Fim do Quiz!',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         content: Text(
-            'Você acertou $_score de ${widget.questions.length} perguntas e ganhou $xpGained XP!',
+            'Você acertou $_score de ${_shuffledQuestions.length} perguntas e ganhou $xpGained XP!',
             style: const TextStyle(color: Colors.white, fontSize: 16)),
         actions: [
           TextButton(
@@ -124,6 +162,7 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   void _showLevelUpDialog(UserProfile userProfile) {
+    if (!mounted) return;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -183,7 +222,10 @@ class _QuizPageState extends State<QuizPage> {
     if (!isAnswered) {
       return AppColors.azulForte;
     }
-    if (index == widget.questions[_currentQuestionIndex].correctOptionIndex) {
+    final List<QuestionOptions> currentOptions = _shuffledOptionsPerQuestion[_currentQuestionIndex];
+    final QuestionOptions option = currentOptions[index];
+
+    if (option.isCorrect) {
       return Colors.green;
     }
     if (index == selectedAnswerIndex) {
@@ -194,7 +236,8 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentQuestion = widget.questions[_currentQuestionIndex];
+    final currentQuestion = _shuffledQuestions[_currentQuestionIndex];
+    final currentOptions = _shuffledOptionsPerQuestion[_currentQuestionIndex];
     return Scaffold(
       appBar: AppBar(title: const Text('Quiz Rápido')),
       body: SafeArea(
@@ -214,17 +257,18 @@ class _QuizPageState extends State<QuizPage> {
               Expanded(
                 flex: 3,
                 child: ListView.separated(
-                  itemCount: currentQuestion.options.length,
+                  itemCount: currentOptions.length,
                   separatorBuilder: (context, index) =>
                   const SizedBox(height: 12),
                   itemBuilder: (context, index) {
+                    final option = currentOptions[index];
                     return ElevatedButton(
                         onPressed: () => _checkAnswer(index),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: _getButtonColor(index),
                             padding: const EdgeInsets.symmetric(
                                 vertical: 20, horizontal: 16)),
-                        child: Text(currentQuestion.options[index],
+                        child: Text(option.text,
                             textAlign: TextAlign.center,
                             style: const TextStyle(fontSize: 18)));
                   },

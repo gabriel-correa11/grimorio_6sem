@@ -10,7 +10,6 @@ class AchievementsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allAchievements = AchievementLogic.allAchievements;
 
     return Scaffold(
       appBar: AppBar(
@@ -18,16 +17,27 @@ class AchievementsPage extends StatelessWidget {
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(16.0),
-        itemCount: allAchievements.length,
-        separatorBuilder: (context, index) => const Divider(height: 1),
+        itemCount: AchievementLogic.allAchievements.length,
+        separatorBuilder: (context, index) =>
+            Divider(color: AppColors.azulRoyal.withAlpha(100), height: 1),
         itemBuilder: (context, index) {
-          final achievement = allAchievements[index];
+          final Achievement achievement = AchievementLogic.allAchievements[index];
           final bool isUnlocked = unlockedIds.contains(achievement.id);
+
           final Color iconColor =
-          isUnlocked ? Colors.amber.shade300 : Colors.grey.shade600;
-          final Color textColor = isUnlocked ? Colors.white : Colors.grey.shade500;
+          isUnlocked ? Colors.amber.shade300 : Colors.blueGrey.shade700;
+          final Color titleColor =
+          isUnlocked ? Colors.white : Colors.grey.shade500;
+          final Color subtitleColor =
+          isUnlocked ? Colors.white70 : Colors.grey.shade600;
+          final Widget trailingIcon = isUnlocked
+              ? Icon(Icons.check_circle, color: Colors.green.shade400)
+              : Icon(Icons.lock, color: Colors.grey.shade600);
+          final Color tileColor =
+          isUnlocked ? AppColors.azulRoyal.withAlpha(50) : Colors.transparent;
 
           return ListTile(
+            tileColor: tileColor,
             leading: Icon(
               IconData(int.parse(achievement.iconCodePoint),
                   fontFamily: 'MaterialIcons'),
@@ -38,16 +48,14 @@ class AchievementsPage extends StatelessWidget {
               achievement.name,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: textColor,
+                color: titleColor,
               ),
             ),
             subtitle: Text(
               achievement.description,
-              style: TextStyle(color: textColor.withAlpha(200)),
+              style: TextStyle(color: subtitleColor),
             ),
-            trailing: isUnlocked
-                ? Icon(Icons.check_circle, color: Colors.green.shade400)
-                : const Icon(Icons.lock, color: Colors.grey),
+            trailing: trailingIcon,
           );
         },
       ),

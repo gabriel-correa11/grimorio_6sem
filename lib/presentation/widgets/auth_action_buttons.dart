@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grimorio/presentation/theme/app_colors.dart';
 
 class AuthActionButtons extends StatelessWidget {
   final bool isLogin;
@@ -26,6 +27,9 @@ class AuthActionButtons extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: TextButton(
               onPressed: isLoading ? null : onResetPassword,
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white70, // Mudança aqui
+              ),
               child: const Text('Esqueceu a senha?'),
             ),
           ),

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:grimorio/core/logic/achievement_logic.dart';
-// import 'package:grimorio/core/models/achievement.dart';
 import 'package:grimorio/core/services/auth_service.dart';
 import 'package:grimorio/core/services/database_service.dart';
 import 'package:grimorio/core/logic/game_logic.dart';
@@ -74,6 +72,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 _buildMasteryInsignia(userProfile),
                 const SizedBox(height: 32),
                 _buildProgressSection(userProfile),
+                const SizedBox(height: 24),
+                _buildWisdomIndex(userProfile), // Seção reintroduzida
                 const SizedBox(height: 24),
                 _buildAchievementsButton(context, userProfile),
                 const SizedBox(height: 24),
@@ -184,9 +184,60 @@ class _ProfilePageState extends State<ProfilePage> {
     return 'A sabedoria se acumula a cada página.';
   }
 
+  Widget _buildWisdomIndex(UserProfile profile) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Índice de Sabedoria',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppColors.azulClaro,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+                child: _buildStatItem(Icons.menu_book,
+                    profile.completedBooksCount.toString(), 'Tomos Lidos')),
+            const SizedBox(width: 16),
+            Expanded(
+                child: _buildStatItem(Icons.bookmark,
+                    profile.chaptersAttemptedCount.toString(), 'Capítulos Decifrados')),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatItem(IconData icon, String value, String label) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.azulRoyal.withAlpha(127),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: AppColors.azulClaro, size: 28),
+          const SizedBox(height: 8),
+          Text(value,
+              style:
+              const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text(label,
+              style: const TextStyle(color: Colors.white70),
+              textAlign: TextAlign.center),
+        ],
+      ),
+    );
+  }
+
+
   Widget _buildAchievementsButton(BuildContext context, UserProfile profile) {
     return ElevatedButton.icon(
-      icon: const Icon(Icons.shield_outlined), // Ou Icons.emoji_events
+      icon: const Icon(Icons.shield_outlined),
       label: const Text('Minhas Conquistas'),
       onPressed: () {
         Navigator.push(

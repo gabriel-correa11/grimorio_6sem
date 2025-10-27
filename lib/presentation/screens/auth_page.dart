@@ -35,6 +35,8 @@ class AuthPage extends StatelessWidget {
                         passwordController: controller.passwordController,
                         confirmPasswordController:
                         controller.confirmPasswordController,
+                        termsAccepted: controller.termsAccepted,
+                        onToggleTerms: controller.toggleTermsAccepted,
                       ),
                       AuthActionButtons(
                         isLogin: controller.isLogin,
